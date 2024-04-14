@@ -70,5 +70,25 @@ for ($i = 1; $i <= $daysInMonth; $i++, $currentDate = date('Y-m-d', strtotime("$
     $dayContent .= "</div>";
     $calendar .= $dayContent;
 }
+document.getElementById('congeForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+    var formData = new FormData(this);
+    fetch('submit_conge.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Congé ajouté avec succès');
+            location.reload(); // Simplement pour actualiser, à remplacer par une logique plus fine si nécessaire.
+        } else {
+            alert('Erreur lors de l\'ajout du congé');
+        }
+    })
+    .catch(error => {
+        alert('Erreur: ' + error);
+    });
+});
 
 </html>
