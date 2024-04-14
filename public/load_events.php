@@ -1,25 +1,31 @@
 <?php
-header('Content-Type: application/json');
 require_once '/var/www/src/db.php';
 
-$start = $_GET['start'];
-$end = $_GET['end'];
-
-$query = "SELECT username, description, start_date AS start, end_date AS end FROM conges WHERE start_date BETWEEN ? AND ? OR end_date BETWEEN ? AND ?";
-$stmt = $mysqli->prepare($query);
-$stmt->bind_param("ssss", $start, $end, $start, $end);
-$stmt->execute();
-$result = $stmt->get_result();
-
-$events = [];
-while ($row = $result->fetch_assoc()) {
-    $events[] = [
-        'title' => $row['username'] . ': ' . $row['description'],
-        'start' => $row['start'],
-        'end' => $row['end'],
-        'color' => '#' . substr(md5($row['username']), 0, 6)  // Couleur unique par utilisateur
-    ];
+// Assurez-vous que l'utilisateur est connecté
+if (!isset($_SESSION['username'])) {
+    echo json_encode(['success' => false, 'message' => "Erreur: utilisateur non connecté."]);
+    exit;
 }
-echo json_encode($events);
+
+$username = $_SESSION['username'];
+$title = filter_input(INPUT_POST, 'title', FILTER_SANITIZE_STRING);
+$start = date('Y-m-d', strtotime($_POST['start']));
+$end = date('Y-m-d', strtotime($_POST['end']));
+
+// Préparation de la requête pour éviter les injections SQL
+$stmt = $mysqli->prepare("INSERT INTO conges (username, description, start_date, end_date) VALUES (?, ?, ?, ?)");
+$stmt->bind_param("ssss", $username, $title, $start, $end);
+
+$response = [];
+if ($stmt->execute()) {
+    $response['success'] = true;
+    $response['message'] = "Congé ajouté avec succès";
+} else {
+    $response['success'] = false;
+    $response['message'] = "Erreur lors de l'ajout du congé: " . $mysqli->error;
+}
+echo json_encode($response);
+
+$stmt->close();
 $mysqli->close();
 ?>
