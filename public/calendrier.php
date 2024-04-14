@@ -1,66 +1,51 @@
+<?php
+$month = date('F');
+$year = date('Y');
+$daysInMonth = date('t');
+$startDayOfWeek = date('N', strtotime("$year-$month-01"));
+?>
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <title>Calendrier Annuel des Congés</title>
     <link rel="stylesheet" href="styles.css">
-    <link href='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.css' rel='stylesheet' />
-    <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js'></script>
-    <script src='https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js'></script>
-    <script src='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.js'></script>
 </head>
 <body>
-    <header>
-        <h1>Calendrier Annuel des Congés</h1>
-        <nav>
-            <ul>
-                <li><a href="index.php">Accueil</a></li>
-                <li><a href="calendrier.php">Calendrier</a></li>
-            </ul>
-        </nav>
-    </header>
-    <section>
-        <div id='calendar'></div>
-    </section>
-
-    <script>
-    $(document).ready(function() {
-        var calendar = $('#calendar').fullCalendar({
-            editable: true,
-            header: {
-                left: 'sixMonthsBack, sixMonthsForward',
-                center: 'title',
-                right: 'month'
-            },
-            defaultView: 'month',
-            events: 'load_events.php',
-            customButtons: {
-                sixMonthsBack: {
-                    text: '-6 mois',
-                    click: function() {
-                        var date = $('#calendar').fullCalendar('getDate');
-                        $('#calendar').fullCalendar('gotoDate', date.subtract(6, 'months'));
-                    }
-                },
-                sixMonthsForward: {
-                    text: '+6 mois',
-                    click: function() {
-                        var date = $('#calendar').fullCalendar('getDate');
-                        $('#calendar').fullCalendar('gotoDate', date.add(6, 'months'));
-                    }
-                }
-            },
-            dayClick: function(date, jsEvent, view) {
-                // your existing dayClick function
-            },
-            eventClick: function(event, jsEvent, view) {
-                // your existing eventClick function
-            },
-            eventRender: function(event, element) {
-                // your existing eventRender function
+    <div class="calendar-container">
+        <div class="calendar-header">
+            <h1><?php echo $month; ?> <button>▾</button></h1>
+            <p><?php echo $year; ?></p>
+        </div>
+        <div class="calendar">
+            <?php
+            $dayNames = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+            foreach ($dayNames as $dayName) {
+                echo "<span class='day-name'>$dayName</span>";
             }
-        });
-    });
-    </script>
+
+            $currentDay = 1;
+            $cells = $startDayOfWeek + $daysInMonth - 1;
+            for ($i = 1; $i <= $cells; $i++) {
+                if ($i >= $startDayOfWeek) {
+                    echo "<div class='day'>$currentDay</div>";
+                    $currentDay++;
+                } else {
+                    echo "<div class='day day--disabled'></div>";
+                }
+            }
+            ?>
+        </div>
+        <section class="task task--warning">
+            <div class="task__detail">
+                <h2>Product Checkup 1</h2>
+                <p>15-17th November</p>
+            </div>
+        </section>
+        <section class="task task--danger">Design Sprint</section>
+        <section class="task task--primary">Product Checkup 1</section>
+        <section class="task task--info">Product Checkup 2</section>
+    </div>
 </body>
 </html>
