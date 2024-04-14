@@ -2,11 +2,14 @@
 header('Content-Type: application/json');
 require_once '/var/www/src/db.php';
 
-$start = date('Y-m-d', $_GET['start']);
-$end = date('Y-m-d', $_GET['end']);
+$start = $_GET['start'];
+$end = $_GET['end'];
 
-$query = "SELECT username, description, start_date AS start, end_date AS end FROM conges WHERE start_date BETWEEN '$start' AND '$end' OR end_date BETWEEN '$start' AND '$end'";
-$result = $mysqli->query($query);
+$query = "SELECT username, description, start_date AS start, end_date AS end FROM conges WHERE start_date BETWEEN ? AND ? OR end_date BETWEEN ? AND ?";
+$stmt = $mysqli->prepare($query);
+$stmt->bind_param("ssss", $start, $end, $start, $end);
+$stmt->execute();
+$result = $stmt->get_result();
 
 $events = [];
 while ($row = $result->fetch_assoc()) {
@@ -14,7 +17,7 @@ while ($row = $result->fetch_assoc()) {
         'title' => $row['username'] . ': ' . $row['description'],
         'start' => $row['start'],
         'end' => $row['end'],
-        'color' => '#' . substr(md5($row['username']), 0, 6)  // Génère une couleur hexadécimale basée sur le nom d'utilisateur
+        'color' => '#' . substr(md5($row['username']), 0, 6)  // Couleur unique par utilisateur
     ];
 }
 echo json_encode($events);
