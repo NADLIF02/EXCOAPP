@@ -1,6 +1,6 @@
 body {
     font-family: Arial, sans-serif;
-    background-color: #f4f4f4;  /* Couleur de fond pour rendre le contenu plus lisible */
+    background-color: #f4f4f4;
     margin: 0;
     padding: 0;
     display: flex;
@@ -9,18 +9,26 @@ body {
     height: 100vh;
 }
 
-header {
-    background-color: #0056b3;  /* Couleur plus professionnelle */
-    color: white;  /* Contraste pour la lisibilité */
-    padding: 20px;
-    width: 100%;
-    box-sizing: border-box;
+.container {
+    width: 90%;
+    max-width: 600px;
     text-align: center;
 }
 
+header h1 {
+    font-size: 2.5em; /* Grande taille pour le titre */
+    color: #0056b3; /* Couleur bleue pour le titre */
+}
+
+header p {
+    font-size: 1.5em; /* Taille augmentée pour le sous-titre */
+    color: #333;
+}
+
 nav ul {
-    list-style: none;
+    list-style-type: none;
     padding: 0;
+    margin: 10px 0;
 }
 
 nav ul li {
@@ -30,7 +38,8 @@ nav ul li {
 
 nav ul li a {
     text-decoration: none;
-    color: white;  /* Adapté à la couleur du fond d'en-tête */
+    color: #0056b3;
+    font-size: 1.2em;
 }
 
 section {
@@ -38,24 +47,29 @@ section {
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    width: 90%;
-    max-width: 600px;
+    margin-top: 20px;
 }
 
 input[type="text"], input[type="password"], input[type="submit"] {
     width: 100%;
-    padding: 8px;
-    margin-top: 5px;  /* Espacement pour esthétique */
-    box-sizing: border-box;  /* Inclut padding et border dans la largeur */
+    padding: 10px;
+    margin-top: 5px;
+    box-sizing: border-box;
 }
 
 input[type="submit"] {
-    background-color: #4CAF50; /* Couleur verte pour l'action */
+    background-color: #4CAF50;
     color: white;
     border: none;
     cursor: pointer;
+    font-size: 1em;
 }
 
 input[type="submit"]:hover {
     background-color: #45a049;
+}
+
+.error {
+    color: red;
+    font-weight: bold;
 }
