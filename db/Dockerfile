@@ -1,16 +1,21 @@
-# Utilisez la dernière image officielle de MariaDB
-FROM mariadb:10.5
+# Use the specific version of MariaDB
+FROM mariadb:latest
 
-# Définissez des variables d'environnement pour le mot de passe root et les détails de la base de données
+# Set environment variables for MySQL
 ENV MYSQL_ROOT_PASSWORD=admin123
 ENV MYSQL_DATABASE=employee_leaves
 ENV MYSQL_USER=admin
 ENV MYSQL_PASSWORD=admin123
 
-# Copiez votre fichier SQL dans le dossier d'initialisation de Docker
-COPY init.sql /docker-entrypoint-initdb.d/
-# Exposez le port par défaut de MariaDB
+# Copy your initialization scripts
+COPY ./init.sql /docker-entrypoint-initdb.d/
+
+# Copy the custom entrypoint script
+COPY custom-entrypoint.sh /usr/local/bin/custom-entrypoint.sh
+RUN chmod +x /usr/local/bin/custom-entrypoint.sh
+
+# Expose the default port
 EXPOSE 3306
 
-# Le script d'entrée par défaut de MariaDB s'occupera de lancer le serveur
-CMD ["mysqld"]
+# Set the custom entrypoint
+ENTRYPOINT ["custom-entrypoint.sh"]
