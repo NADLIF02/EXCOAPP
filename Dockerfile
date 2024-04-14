@@ -10,6 +10,7 @@ RUN docker-php-ext-install mysqli
 RUN a2enmod rewrite
 
 # Copier les fichiers sources dans le conteneur
+COPY src/ /var/www/src/
 COPY public/ /var/www/html/
 
 # Exposer le port 80
