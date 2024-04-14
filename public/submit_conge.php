@@ -1,7 +1,7 @@
 <?php
 require_once '/var/www/src/db.php';
 
-// Assurez-vous que l'utilisateur est connecté et récupérez son nom
+// Assurez-vous que l'utilisateur est connecté
 if (!isset($_SESSION['username'])) {
     echo json_encode(['success' => false, 'message' => "Erreur: utilisateur non connecté."]);
     exit;
@@ -13,11 +13,11 @@ $start = date('Y-m-d', strtotime($_POST['start']));
 $end = date('Y-m-d', strtotime($_POST['end']));
 
 // Préparation de la requête pour éviter les injections SQL
-$query = $mysqli->prepare("INSERT INTO conges (username, description, start_date, end_date) VALUES (?, ?, ?, ?)");
-$query->bind_param("ssss", $username, $title, $start, $end); // 'ssss' indique que tous les paramètres sont des strings
+$stmt = $mysqli->prepare("INSERT INTO conges (username, description, start_date, end_date) VALUES (?, ?, ?, ?)");
+$stmt->bind_param("ssss", $username, $title, $start, $end);
 
 $response = [];
-if ($query->execute()) {
+if ($stmt->execute()) {
     $response['success'] = true;
     $response['message'] = "Congé ajouté avec succès";
 } else {
@@ -26,6 +26,6 @@ if ($query->execute()) {
 }
 echo json_encode($response);
 
-$query->close();
+$stmt->close();
 $mysqli->close();
 ?>
