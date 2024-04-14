@@ -1,12 +1,21 @@
 <?php
 session_start();
+
+// Vérification de l'état de connexion pour rediriger les utilisateurs déjà connectés
+if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true) {
+    header("Location: calendrier.php");
+    exit;
+}
+
+$error_message = '';  // Initialisation de la variable de message d'erreur
+
 // Traitement du formulaire de connexion
 if (isset($_POST['login'])) {
     $username = $_POST['username'];
     $password = $_POST['password'];
 
     // Vérification des identifiants (exemple simple)
-    if ($username == "admin" && $password == "admin123") {
+    if ($username === "admin" && $password === "admin123") {
         // Définition des variables de session
         $_SESSION['loggedin'] = true;
         $_SESSION['username'] = $username;
@@ -39,12 +48,14 @@ if (isset($_POST['login'])) {
     </header>
     <section>
         <h2>Connexion</h2>
-        <?php if (isset($error_message)): ?>
-            <p style='color:red;'><?= $error_message ?></p>
+        <?php if (!empty($error_message)): ?>
+            <p style='color: red;'><?= $error_message ?></p>
         <?php endif; ?>
         <form action="index.php" method="post">
-            Nom d'utilisateur: <input type="text" name="username"><br>
-            Mot de passe: <input type="password" name="password"><br>
+            <label for="username">Nom d'utilisateur:</label>
+            <input type="text" id="username" name="username" required><br>
+            <label for="password">Mot de passe:</label>
+            <input type="password" id="password" name="password" required><br>
             <input type="submit" name="login" value="Se connecter">
         </form>
     </section>
