@@ -1,11 +1,11 @@
-# Utilisez l'image officielle de MariaDB
-FROM mariadb:latest
+# Utilisez une version spécifique de l'image officielle de MariaDB pour éviter des surprises avec 'latest'
+FROM mariadb:10.5
 
 # Définissez des variables d'environnement pour le mot de passe root et les détails de la base de données
-ENV MYSQL_ROOT_PASSWORD=admin123
-ENV MYSQL_DATABASE=employee_leaves
-ENV MYSQL_USER=admin
-ENV MYSQL_PASSWORD=admin123
+ENV MYSQL_ROOT_PASSWORD=admin123 \
+    MYSQL_DATABASE=employee_leaves \
+    MYSQL_USER=admin \
+    MYSQL_PASSWORD=admin123
 
 # Copiez votre fichier SQL dans le dossier d'initialisation de Docker
 COPY ./db/init.sql /docker-entrypoint-initdb.d/
