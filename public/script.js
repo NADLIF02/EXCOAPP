@@ -7,11 +7,9 @@ document.getElementById('congeForm').addEventListener('submit', function(event) 
     })
     .then(response => response.json())
     .then(data => {
+        alert(data.message);
         if (data.success) {
-            alert('Congé ajouté avec succès');
-            location.reload(); // Pour actualiser le calendrier
-        } else {
-            alert('Erreur lors de l\'ajout du congé');
+            $('#calendar').fullCalendar('refetchEvents'); // Rafraîchit les événements au lieu de recharger la page
         }
     })
     .catch(error => {
