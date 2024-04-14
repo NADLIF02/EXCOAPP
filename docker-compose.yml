@@ -1,4 +1,5 @@
 version: '3.8'
+
 services:
   web:
     build: .
@@ -8,6 +9,12 @@ services:
       - ./public:/var/www/html
     depends_on:
       - db
+    environment:
+      - MYSQL_HOST=db
+      - MYSQL_USER=utilisateur
+      - MYSQL_PASSWORD=mot_de_passe
+      - MYSQL_DATABASE=nom_de_votre_base
+
   db:
     image: mysql:5.7
     environment:
