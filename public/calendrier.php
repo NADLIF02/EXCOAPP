@@ -21,40 +21,42 @@ $year = date('Y');
 <body>
     <div id='calendar'></div>
     <script>
-    $(document).ready(function() {
-        $('#calendar').fullCalendar({
-            header: {
-                left: 'prev,next today',
-                center: 'title',
-                right: 'month,agendaWeek,agendaDay'
-            },
-            editable: true,
-            eventLimit: true, // for all non-agenda views
-            views: {
-                agenda: {
-                    eventLimit: 6 // adjust to 6 only for agendaWeek/agendaDay
-                }
-            },
-            events: function(start, end, timezone, callback) {
-                $.ajax({
-                    url: '/path_to_load_events.php', // Chemin vers le script PHP qui retourne les données JSON
-                    dataType: 'json',
-                    data: {
-                        // nos données à envoyer
-                        start: start.unix(),
-                        end: end.unix()
-                    },
-                    success: function(doc) {
-                        var events = [];
-                        $(doc).each(function() {
-                            events.push({
-                                title: $(this).attr('title'),
-                                start: $(this).attr('start'), // Assurez-vous que la date de début est correcte
-                                end: $(this).attr('end'), // Assurez-vous que la date de fin est correcte
-                                backgroundColor: $(this).attr('color'), // Couleur par utilisateur
-                                borderColor: $(this).attr('color')
-                            });
-                        });
+  $(document).ready(function() {
+    var calendar = $('#calendar').fullCalendar({
+        header: {
+            left: 'prev,next today',
+            center: 'title',
+            right: 'month,agendaWeek,agendaDay'
+        },
+        editable: true,
+        selectable: true,
+        selectHelper: true,
+        select: function(start, end) {
+            var title = prompt("Entrez le motif de votre congé:");
+            var eventData;
+            if (title) {
+                eventData = {
+                    title: title,
+                    start: start,
+                    end: end
+                };
+                $('#calendar').fullCalendar('renderEvent', eventData, true); // stick? = true
+                // Ajouter ici le code pour envoyer les données au serveur
+                $.post('/submit_conge.php', {
+                    title: title,
+                    start: start.format(),
+                    end: end.format()
+                }, function(response){
+                    alert("Congé ajouté avec succès");
+                });
+            }
+            $('#calendar').fullCalendar('unselect');
+        },
+        eventLimit: true, // allow "more" link when too many events
+        events: '/path_to_load_events.php',
+    });
+});
+
                         callback(events);
                     }
                 });
