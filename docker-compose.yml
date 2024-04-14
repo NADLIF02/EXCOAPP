@@ -2,9 +2,8 @@ version: '3.8'
 
 services:
   db:
-    build:
-      context: ./db
-      dockerfile: Dockerfile
+    build: ./db
+      container_name: Database
     environment:
       MYSQL_ROOT_PASSWORD: admin123  # Utilisez un mot de passe fort en production
       MYSQL_DATABASE: employee_leaves
@@ -14,11 +13,11 @@ services:
       - "3306:3306"
     volumes:
       - db_data:/var/lib/mysql
+     restart: always
 
   web:
-    build:
-      context: ./public
-      dockerfile: Dockerfile  # Assurez-vous que le Dockerfile est situé dans le répertoire public
+    build: ./public
+    container_name: EXCOAPP
     ports:
       - "80:80"
     volumes:
@@ -26,6 +25,5 @@ services:
       - ./src:/var/www/src  # Cela monte le répertoire src dans le conteneur pour accéder à db.php ou à d'autres fichiers PHP nécessaires
     depends_on:
       - db
-
 volumes:
   db_data:
