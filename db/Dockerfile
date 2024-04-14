@@ -1,5 +1,5 @@
 # Utilisez la dernière image officielle de MariaDB
-FROM mariadb:latest
+FROM mariadb:10.5
 
 # Définissez des variables d'environnement pour le mot de passe root et les détails de la base de données
 ENV MYSQL_ROOT_PASSWORD=admin123
