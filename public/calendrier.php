@@ -37,14 +37,16 @@
                             start: start,
                             end: end
                         };
-                        $('#calendar').fullCalendar('renderEvent', eventData);
+                        $('#calendar').fullCalendar('renderEvent', eventData, true); // stick the event
                         // Save to server
                         $.post('submit_conge.php', {
                             title: title,
                             start: start.format(),
                             end: end.format()
                         }, function(response) {
-                            console.log(response);
+                            alert('Réponse du serveur: ' + response);
+                        }).fail(function() {
+                            alert('Erreur lors de la sauvegarde du congé.');
                         });
                     }
                     $('#calendar').fullCalendar('unselect');
