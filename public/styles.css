@@ -7,23 +7,23 @@ body {
     justify-content: center;
     align-items: center;
     height: 100vh;
-    overflow: auto; /* Ajout pour gérer le scroll si nécessaire */
+    overflow: auto; /* Pour gérer le défilement */
 }
 
 .calendar-container {
-    width: 100%; /* Ajusté pour mieux gérer plusieurs calendriers */
-    max-width: none; /* Retire la restriction de largeur maximale */
-    display: flex; /* Utiliser flexbox pour aligner les calendriers côte à côte */
-    justify-content: space-around; /* Espacer équitablement les calendriers */
-    margin: 20px; /* Ajout d'une marge autour des calendriers */
-    flex-wrap: wrap; /* Permet aux calendriers de passer à la ligne en responsive */
+    width: 100%;
+    max-width: none;
+    display: flex;
+    justify-content: space-around;
+    margin: 20px;
+    flex-wrap: wrap;
 }
 
 .calendar-header {
     padding: 20px;
     background: linear-gradient(to bottom, #ffffff 0%, rgba(255,255,255,0) 100%);
     text-align: center;
-    width: 100%; /* Assure que l'en-tête couvre toute la largeur du calendrier */
+    width: 100%;
 }
 
 .calendar-header h1 {
@@ -31,23 +31,11 @@ body {
     color: #0056b3;
 }
 
-.calendar-header button {
-    position: absolute;
-    right: 20px;
-    top: 50%;
-    transform: translateY(-50%);
-    background: none;
-    border: none;
-    color: #0056b3;
-    font-size: 1em;
-    cursor: pointer;
-}
-
 .calendar {
-    width: 30%; /* Chaque calendrier prend 30% de l'espace disponible */
+    width: 90%; /* Pour une meilleure visibilité */
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    grid-auto-rows: 100px; /* Ajusté pour mieux utiliser l'espace */
+    grid-auto-rows: 100px;
 }
 
 .day, .day-name {
@@ -73,7 +61,7 @@ body {
     background-color: rgba(255, 255, 255, 0.9);
     border-top: 3px solid;
     font-size: 0.75em;
-    text-align: center; /* Centrer le texte des tâches */
+    text-align: center;
 }
 
 .task--warning { border-color: #fdb44d; }
@@ -83,15 +71,15 @@ body {
 
 @media (max-width: 768px) {
     .calendar-container {
-        flex-direction: column; /* Les calendriers s'empilent verticalement en mode responsive */
+        flex-direction: column;
     }
 
     .calendar {
-        width: 90%; /* Chaque calendrier prend plus de place en mode responsive */
-        margin-bottom: 20px; /* Ajoute de l'espace entre les calendriers */
+        width: 100%;
+        margin-bottom: 20px;
     }
 
     .calendar-header h1, .calendar-header p, .day-name, .day {
-        font-size: 0.75em; /* Réduction de la taille de la police pour les petits écrans */
+        font-size: 0.75em;
     }
 }
