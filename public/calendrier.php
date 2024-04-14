@@ -25,11 +25,37 @@
 
     <script>
     $(document).ready(function() {
-        $('#calendar').fullCalendar({
+        var calendar = $('#calendar').fullCalendar({
             editable: true,
+            header: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'month,agendaWeek,agendaDay'
+            },
             events: 'load_events.php', // Ce fichier PHP chargera les événements (congés) de la base de données
             dayClick: function(date, jsEvent, view) {
-                // Ici, vous pouvez ajouter une fonction pour permettre aux utilisateurs de poser un congé
+                var title = prompt('Intitulé du congé:');
+                if (title) {
+                    var startDate = date.format();
+                    var endDate = prompt('Fin du congé (format YYYY-MM-DD):');
+                    if (endDate) {
+                        $.post('add_event.php', {
+                            title: title,
+                            start: startDate,
+                            end: endDate
+                        }, function() {
+                            calendar.fullCalendar('refetchEvents');
+                        });
+                    }
+                }
+            },
+            eventClick: function(event, jsEvent, view) {
+                var confirmDelete = confirm("Voulez-vous supprimer ce congé ?");
+                if (confirmDelete) {
+                    $.post('delete_event.php', { id: event.id }, function() {
+                        calendar.fullCalendar('removeEvents', event.id);
+                    });
+                }
             }
         });
     });
