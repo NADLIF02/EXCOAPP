@@ -1,6 +1,24 @@
 <?php
 session_start();
-require_once '/var/www/src/db.php';  // Assurez-vous que ce chemin est correct
+require_once '/var/www/src/db.php';  // Assurez-vous que le chemin d'accès est correct
+
+// Gestion de l'ajout de congés
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $title = $_POST['title'];
+    $start = date('Y-m-d', strtotime($_POST['start']));
+    $end = date('Y-m-d', strtotime($_POST['end']));
+    $username = $_SESSION['username'] ?? 'DefaultUser';  // Utilisez une valeur par défaut ou assurez-vous que la session est toujours active
+
+    $query = "INSERT INTO conges (username, description, start_date, end_date) VALUES ('$username', '$title', '$start', '$end')";
+    if ($mysqli->query($query) === TRUE) {
+        echo json_encode(['success' => true, 'message' => 'Congé ajouté avec succès']);
+    } else {
+        echo json_encode(['success' => false, 'message' => 'Erreur lors de l\'ajout du congé: ' . $mysqli->error]);
+    }
+    $mysqli->close();
+    exit;
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -30,28 +48,42 @@ require_once '/var/www/src/db.php';  // Assurez-vous que ce chemin est correct
                 select: function(start, end) {
                     var title = prompt("Entrez le motif de votre congé:");
                     if (title) {
-                        var eventData = {
-                            title: title,
-                            start: start,
-                            end: end
-                        };
-                        // Ajouter l'événement au calendrier
-                        $('#calendar').fullCalendar('renderEvent', eventData, true); // stick = true
-                        // Envoyer les données au serveur pour enregistrement
-                        $.post('/submit_conge.php', {
+                        $.post('calendrier.php', {
                             title: title,
                             start: start.format(),
                             end: end.format()
                         }).done(function(response) {
-                            alert("Congé ajouté avec succès");
-                            $('#calendar').fullCalendar('refetchEvents'); // Recharge les événements pour inclure le nouveau
-                        }).fail(function() {
-                            alert("Erreur lors de l'ajout du congé");
+                            response = JSON.parse(response);
+                            alert(response.message);
+                            if (response.success) {
+                                calendar.fullCalendar('refetchEvents');  // Rafraîchir les événements
+                            }
                         });
                     }
-                    $('#calendar').fullCalendar('unselect');
+                    calendar.fullCalendar('unselect');
                 },
-                events: '/load_events.php'  // Assurez-vous que le chemin est correct
+                events: function(start, end, timezone, callback) {
+                    $.ajax({
+                        url: 'load_events.php',  // Assurez-vous que ce fichier gère la requête GET
+                        dataType: 'json',
+                        data: {
+                            start: start.format(),
+                            end: end.format()
+                        },
+                        success: function(response) {
+                            var events = [];
+                            $(response).each(function() {
+                                events.push({
+                                    title: this.title,
+                                    start: this.start,
+                                    end: this.end,
+                                    color: this.color
+                                });
+                            });
+                            callback(events);
+                        }
+                    });
+                }
             });
         });
     </script>
