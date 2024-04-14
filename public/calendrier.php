@@ -54,5 +54,21 @@ $startDayOfWeek = date('N', strtotime("$year-$month-01"));
     <input type="text" name="description" placeholder="Description">
     <button type="submit">Poser congé</button>
 </form>
+// Continuation après récupération des congés
+$calendar = "";
+$currentDate = "$year-$month-01";
+for ($i = 1; $i < $startDayOfWeek; $i++) {
+    $calendar .= "<div class='day day--disabled'></div>";
+}
+for ($i = 1; $i <= $daysInMonth; $i++, $currentDate = date('Y-m-d', strtotime("$currentDate +1 day"))) {
+    $dayContent = "<div class='day' data-date='$currentDate'>$i";
+    foreach ($conges as $conge) {
+        if ($conge['start_date'] <= $currentDate && $conge['end_date'] >= $currentDate) {
+            $dayContent .= "<div class='task' style='background-color: #ffcccc;'>{$conge['description']}</div>";
+        }
+    }
+    $dayContent .= "</div>";
+    $calendar .= $dayContent;
+}
 
 </html>
