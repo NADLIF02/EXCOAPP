@@ -1,7 +1,7 @@
 <?php
 session_start();
 include '../src/db.php'; // Assurez-vous que le chemin est correct si db.php est déplacé
-
+require_once '/var/www/src/db.php'; 
 $month = date('n'); // Mois en chiffres sans les zéros initiaux
 $year = date('Y');
 
