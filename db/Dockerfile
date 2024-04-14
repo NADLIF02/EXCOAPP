@@ -1,5 +1,5 @@
 # Use the specific version of MariaDB
-FROM mariadb:latest
+FROM mariadb:11.2
 
 # Set environment variables for MySQL
 ENV MYSQL_ROOT_PASSWORD=admin123
