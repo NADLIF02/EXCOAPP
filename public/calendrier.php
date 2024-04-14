@@ -1,30 +1,10 @@
 <?php
 session_start();
-require_once '/var/www/src/db.php';  // Assurez-vous que le chemin d'accès est correct
+require_once '/var/www/src/db.php';  // Assurez-vous que le chemin est correct
 
-// Gestion de l'ajout de congés via une requête POST
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $title = $_POST['title'];
-    $start = date('Y-m-d', strtotime($_POST['start']));
-    $end = date('Y-m-d', strtotime($_POST['end']));
-    $username = $_SESSION['username'] ?? 'DefaultUser';  // Utilisez une valeur par défaut ou assurez-vous que la session est toujours active
+// Ajout d'une en-tête pour éviter les problèmes de cache sur les requêtes AJAX
+header("Cache-Control: no-cache, must-revalidate");
 
-    $query = "INSERT INTO conges (username, description, start_date, end_date) VALUES (?, ?, ?, ?)";
-    $stmt = $mysqli->prepare($query);
-    if ($stmt) {
-        $stmt->bind_param("ssss", $username, $title, $start, $end);
-        if ($stmt->execute()) {
-            echo json_encode(['success' => true, 'message' => 'Congé ajouté avec succès']);
-        } else {
-            echo json_encode(['success' => false, 'message' => 'Erreur lors de l\'ajout du congé: ' . $stmt->error]);
-        }
-        $stmt->close();
-    } else {
-        echo json_encode(['success' => false, 'message' => 'Erreur de préparation de la requête']);
-    }
-    $mysqli->close();
-    exit;
-}
 ?>
 
 <!DOCTYPE html>
@@ -46,7 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 header: {
                     left: 'prev,next today',
                     center: 'title',
-                    right: 'month,agendaWeek,agendaDay'
+                    right: 'month,agendaWeek,agendaDay,listWeek'
                 },
                 editable: true,
                 selectable: true,
@@ -54,21 +34,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 select: function(start, end) {
                     var title = prompt("Entrez le motif de votre congé:");
                     if (title) {
-                        $.post('calendrier.php', {
+                        $.post('submit_conge.php', {
                             title: title,
                             start: start.format(),
                             end: end.format()
-                        }).done(function(response) {
+                        }, function(response) {
                             response = JSON.parse(response);
                             alert(response.message);
                             if (response.success) {
-                                calendar.fullCalendar('refetchEvents');  // Rafraîchir les événements
+                                calendar.fullCalendar('refetchEvents');
                             }
                         });
                     }
                     calendar.fullCalendar('unselect');
                 },
-                events: '/load_events.php'  // URL du fichier de chargement des événements
+                eventLimit: true,
+                events: 'load_events.php'
             });
         });
     </script>
