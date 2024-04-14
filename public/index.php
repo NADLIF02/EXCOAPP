@@ -1,6 +1,6 @@
 <?php
 session_start();
-
+require_once '/var/www/src/db.php'; 
 // Vérification de l'état de connexion pour rediriger les utilisateurs déjà connectés
 if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true) {
     header("Location: calendrier.php");
