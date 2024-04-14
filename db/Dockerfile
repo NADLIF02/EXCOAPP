@@ -8,7 +8,7 @@ ENV MYSQL_ROOT_PASSWORD=admin123 \
     MYSQL_PASSWORD=admin123
 
 # Copiez votre fichier SQL dans le dossier d'initialisation de Docker
-COPY ./db/init.sql 
+COPY 50-server.cnf /etc/mysql/mariadb.conf.d/50-server.cnf
 # Exposez le port par défaut de MariaDB
 EXPOSE 3306
 
