@@ -1,30 +1,41 @@
 <?php
 session_start();
 require_once '/var/www/src/db.php'; 
-// Vérification de l'état de connexion pour rediriger les utilisateurs déjà connectés
+
+// Redirection si déjà connecté
 if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true) {
     header("Location: calendrier.php");
     exit;
 }
 
-$error_message = '';  // Initialisation de la variable de message d'erreur
+$error_message = '';
 
-// Traitement du formulaire de connexion
 if (isset($_POST['login'])) {
-    $username = $_POST['username'];
-    $password = $_POST['password'];
+    $username = filter_input(INPUT_POST, 'username', FILTER_SANITIZE_STRING);
+    $password = filter_input(INPUT_POST, 'password', FILTER_SANITIZE_STRING);
 
-    // Vérification des identifiants (exemple simple)
-    if ($username === "admin" && $password === "admin123") {
-        // Définition des variables de session
-        $_SESSION['loggedin'] = true;
-        $_SESSION['username'] = $username;
-        // Redirection vers le calendrier
-        header("Location: calendrier.php");
-        exit;
+    if (empty($username) || empty($password)) {
+        $error_message = "Veuillez remplir tous les champs.";
     } else {
-        // Connexion échouée, afficher un message d'erreur
-        $error_message = "Nom d'utilisateur ou mot de passe incorrect.";
+        // Préparez ici votre requête à la base de données pour vérifier les identifiants
+        $stmt = $db->prepare("SELECT id, username, password FROM users WHERE username = ?");
+        $stmt->bind_param("s", $username);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if ($user = $result->fetch_assoc()) {
+            // Vérifiez le mot de passe (supposons que les mots de passe sont hachés)
+            if (password_verify($password, $user['password'])) {
+                $_SESSION['loggedin'] = true;
+                $_SESSION['username'] = $user['username'];
+                header("Location: calendrier.php");
+                exit;
+            } else {
+                $error_message = "Mot de passe incorrect.";
+            }
+        } else {
+            $error_message = "Nom d'utilisateur introuvable.";
+        }
     }
 }
 ?>
