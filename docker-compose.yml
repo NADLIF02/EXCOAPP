@@ -16,7 +16,7 @@ services:
     restart: always  # Notez la correction de l'indentation ici
 
   web:
-    build: ./src  # Correction pour pointer vers le bon Dockerfile qui est dans le dossier src et non public
+    build: ./public  # Correction pour pointer vers le bon Dockerfile qui est dans le dossier src et non public
     container_name: excoapp
     ports:
       - "80:80"
