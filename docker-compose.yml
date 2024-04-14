@@ -2,18 +2,21 @@ version: '3.8'
 
 services:
   web:
-    build: ./public  # Correction pour pointer vers le bon Dockerfile qui est dans le dossier src et non public
+    build: 
+      context: ./src  # Correction pour pointer vers le bon Dockerfile dans le dossier src
     container_name: excoapp
     ports:
       - "80:80"
     volumes:
       - ./public:/var/www/html
-      - ./src:/var/www/src  # Cela monte le répertoire src dans le conteneur pour accéder à db.php ou à d'autres fichiers PHP nécessaires
+      - ./src:/var/www/src  # Montage du répertoire src dans le conteneur pour accéder à db.php et d'autres fichiers PHP nécessaires
     depends_on:
       - db
- db:
-    build:
+
+  db:
+    build: 
       context: ./db  # Assurez-vous que cela pointe vers le dossier contenant le Dockerfile et init.sql
+    container_name: database
     environment:
       MYSQL_ROOT_PASSWORD: admin123
       MYSQL_DATABASE: employee_leaves
@@ -23,5 +26,6 @@ services:
       - "3306:3306"
     volumes:
       - db_data:/var/lib/mysql
+
 volumes:
   db_data:
