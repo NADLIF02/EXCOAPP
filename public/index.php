@@ -17,14 +17,13 @@ if (isset($_POST['login'])) {
     if (empty($username) || empty($password)) {
         $error_message = "Veuillez remplir tous les champs.";
     } else {
-        // Préparez ici votre requête à la base de données pour vérifier les identifiants
-        $stmt = $db->prepare("SELECT id, username, password FROM users WHERE username = ?");
-        $stmt->bind_param("s", $username);
+        // Préparer la requête à la base de données pour vérifier les identifiants
+        $stmt = $db->prepare("SELECT id, username, password FROM users WHERE username = :username");
+        $stmt->bindValue(':username', $username);
         $stmt->execute();
-        $result = $stmt->get_result();
 
-        if ($user = $result->fetch_assoc()) {
-            // Vérifiez le mot de passe (supposons que les mots de passe sont hachés)
+        if ($user = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            // Vérifier le mot de passe (supposons que les mots de passe sont hachés)
             if (password_verify($password, $user['password'])) {
                 $_SESSION['loggedin'] = true;
                 $_SESSION['username'] = $user['username'];
