@@ -1,5 +1,7 @@
 <?php
 session_start();
+session_start();
+require_once '/var/www/src/db.php';
 $mysqli = new mysqli("localhost", "username", "password", "database_name"); // Modifiez avec vos vrais données
 
 $start_date = $_POST['start_date'];
