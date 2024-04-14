@@ -20,6 +20,19 @@ $mysqli->close();
 
 $daysInMonth = date('t');
 $startDayOfWeek = date('N', strtotime($startDate));
+$query = "SELECT * FROM conges WHERE (start_date BETWEEN '$startDate' AND '$endDate') OR (end_date BETWEEN '$startDate' AND '$endDate')";
+$result = $mysqli->query($query);
+
+if (!$result) {
+    die('Erreur de requête : ' . $mysqli->error);
+}
+
+$conges = [];
+while ($row = $result->fetch_assoc()) {
+    $conges[] = $row;
+}
+$mysqli->close();
+
 ?>
 
 <!DOCTYPE html>
