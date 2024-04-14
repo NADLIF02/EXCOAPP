@@ -1,4 +1,10 @@
+
 <?php
+session_start();
+require_once '/var/www/src/db.php';  // Assurez-vous que le chemin d'accès est correct
+
+// Le reste de votre script...
+
 // db.php - Gérer la connexion à la base de données avec PDO
 
 $host = 'db';  // Utiliser 'db' qui est le nom du service Docker pour MySQL
