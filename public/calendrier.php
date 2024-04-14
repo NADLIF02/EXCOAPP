@@ -1,7 +1,7 @@
 <?php
 session_start();
 require_once '/var/www/src/db.php';  
-$month = date('n'); // Mois en chiffres sans les zéros initiaux
+$month = date('n');  // Mois en chiffres sans les zéros initiaux
 $year = date('Y');
 
 // Début et fin du mois
@@ -9,16 +9,6 @@ $startDate = "$year-$month-01";
 $endDate = date("Y-m-t", strtotime($startDate));
 
 // Récupérer les congés du mois
-$query = "SELECT * FROM conges WHERE (start_date BETWEEN '$startDate' AND '$endDate') OR (end_date BETWEEN '$startDate' AND '$endDate')";
-$result = $mysqli->query($query);
-$conges = [];
-while ($row = $result->fetch_assoc()) {
-    $conges[] = $row;
-}
-$mysqli->close();
-
-$daysInMonth = date('t');
-$startDayOfWeek = date('N', strtotime($startDate));
 $query = "SELECT * FROM conges WHERE (start_date BETWEEN '$startDate' AND '$endDate') OR (end_date BETWEEN '$startDate' AND '$endDate')";
 $result = $mysqli->query($query);
 
@@ -32,6 +22,8 @@ while ($row = $result->fetch_assoc()) {
 }
 $mysqli->close();
 
+$daysInMonth = date('t');
+$startDayOfWeek = date('N', strtotime($startDate));
 ?>
 
 <!DOCTYPE html>
@@ -53,11 +45,11 @@ $mysqli->close();
                 echo "<span class='day-name'>$dayName</span>";
             }
 
+            $currentDate = $startDate;
             for ($i = 1; $i < $startDayOfWeek; $i++) {
                 echo "<div class='day day--disabled'></div>";
             }
-            
-            $currentDate = $startDate;
+
             for ($i = 1; $i <= $daysInMonth; $i++) {
                 $isConge = false;
                 foreach ($conges as $conge) {
