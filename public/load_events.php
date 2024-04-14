@@ -1,31 +1,23 @@
 <?php
+session_start();
 require_once '/var/www/src/db.php';
 
-// Assurez-vous que l'utilisateur est connecté
-if (!isset($_SESSION['username'])) {
-    echo json_encode(['success' => false, 'message' => "Erreur: utilisateur non connecté."]);
-    exit;
+// Cette page renvoie les événements pour le calendrier en format JSON
+$stmt = $mysqli->prepare("SELECT id, username, description, start_date, end_date FROM conges");
+$stmt->execute();
+$result = $stmt->get_result();
+$events = [];
+
+while ($row = $result->fetch_assoc()) {
+    $events[] = [
+        'id' => $row['id'],
+        'title' => $row['username'] . ': ' . $row['description'],
+        'start' => $row['start_date'],
+        'end' => $row['end_date']
+    ];
 }
 
-$username = $_SESSION['username'];
-$title = filter_input(INPUT_POST, 'title', FILTER_SANITIZE_STRING);
-$start = date('Y-m-d', strtotime($_POST['start']));
-$end = date('Y-m-d', strtotime($_POST['end']));
-
-// Préparation de la requête pour éviter les injections SQL
-$stmt = $mysqli->prepare("INSERT INTO conges (username, description, start_date, end_date) VALUES (?, ?, ?, ?)");
-$stmt->bind_param("ssss", $username, $title, $start, $end);
-
-$response = [];
-if ($stmt->execute()) {
-    $response['success'] = true;
-    $response['message'] = "Congé ajouté avec succès";
-} else {
-    $response['success'] = false;
-    $response['message'] = "Erreur lors de l'ajout du congé: " . $mysqli->error;
-}
-echo json_encode($response);
-
+echo json_encode($events);
 $stmt->close();
 $mysqli->close();
 ?>
