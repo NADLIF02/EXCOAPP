@@ -4,7 +4,7 @@ services:
   db:
     image: mysql:5.7
     environment:
-      MYSQL_ROOT_PASSWORD: 123  # Utilisez un mot de passe fort en production
+      MYSQL_ROOT_PASSWORD: 123  # Changez cela pour un mot de passe plus fort en production
       MYSQL_DATABASE: employee_leaves
       MYSQL_USER: admin
       MYSQL_PASSWORD: admin123
