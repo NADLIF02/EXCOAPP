@@ -13,37 +13,28 @@
     <div id='calendar'></div>
     <script>
         $(document).ready(function() {
-            var calendar = $('#calendar').fullCalendar({
+            $('#calendar').fullCalendar({
                 header: {
                     left: 'prev,next today',
                     center: 'title',
                     right: 'month,agendaWeek,agendaDay,listMonth'
                 },
                 defaultView: 'month',
-                navLinks: true, // can click day/week names to navigate views
+                navLinks: true,
                 editable: true,
-                eventLimit: true, // allow "more" link when too many events
+                eventLimit: true,
                 events: 'load_events.php',
                 eventRender: function(event, element) {
-                    element.find('.fc-title').append('<br/><strong>' + event.title + '</strong>'); // Append user info
+                    element.find('.fc-title').append('<br/><strong>' + event.title + '</strong>');
                 },
                 selectable: true,
                 selectHelper: true,
                 select: function(start, end) {
                     var title = prompt('Entrez le motif de votre congé:');
                     if (title) {
-                        var eventData = {
-                            title: title,
-                            start: start,
-                            end: end
-                        };
-                        $('#calendar').fullCalendar('renderEvent', eventData, true); // stick the event
-                        // Save to server
-                        $.post('submit_conge.php', {
-                            title: title,
-                            start: start.format(),
-                            end: end.format()
-                        }, function(response) {
+                        var eventData = { title: title, start: start, end: end };
+                        $('#calendar').fullCalendar('renderEvent', eventData, true);
+                        $.post('submit_conge.php', { title: title, start: start.format(), end: end.format() }, function(response) {
                             alert('Réponse du serveur: ' + response);
                         }).fail(function() {
                             alert('Erreur lors de la sauvegarde du congé.');
