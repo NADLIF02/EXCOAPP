@@ -36,13 +36,13 @@
             dayClick: function(date, jsEvent, view) {
                 var title = prompt('Intitulé du congé:');
                 if (title) {
-                    var startDate = date.format();
-                    var endDate = prompt('Fin du congé (format YYYY-MM-DD):');
-                    if (endDate) {
+                    var startDate = prompt('Début du congé (format JJ-MM-AAAA):', date.format('DD-MM-YYYY'));
+                    var endDate = prompt('Fin du congé (format JJ-MM-AAAA):', date.format('DD-MM-YYYY'));
+                    if (startDate && endDate) {
                         $.post('add_event.php', {
-                            title: title,
-                            start: startDate,
-                            end: endDate
+                            title: title + ' (' + startDate + ' à ' + endDate + ')',
+                            start: moment(startDate, 'DD-MM-YYYY').format('YYYY-MM-DD'),
+                            end: moment(endDate, 'DD-MM-YYYY').add(1, 'days').format('YYYY-MM-DD')
                         }, function() {
                             calendar.fullCalendar('refetchEvents');
                         });
@@ -56,6 +56,9 @@
                         calendar.fullCalendar('removeEvents', event.id);
                     });
                 }
+            },
+            eventRender: function(event, element) {
+                element.find('.fc-title').append('<br/>(' + event.username + ')'); // Affiche le nom d'utilisateur sous le titre
             }
         });
     });
