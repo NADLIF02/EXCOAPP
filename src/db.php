@@ -7,7 +7,7 @@ $username = 'username'; // Remplacer par votre nom d'utilisateur réel
 $password = 'password'; // Remplacer par votre mot de passe réel
 $database = 'database_name'; // Remplacer par le nom de votre base de données
 
-$mysqli = new mysqli($host, $username, $password, $database);
+$mysqli = new mysqli("db", "admin", "admin123", "employee_leaves");
 
 if ($mysqli->connect_error) {
     die('Erreur de connexion : (' . $mysqli->connect_errno . ') ' . $mysqli->connect_error);
