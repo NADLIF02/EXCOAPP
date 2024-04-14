@@ -2,23 +2,29 @@
 session_start();
 require_once '/var/www/src/db.php';  // Assurez-vous que le chemin d'accès est correct
 
-// Gestion de l'ajout de congés
+// Gestion de l'ajout de congés via une requête POST
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $title = $_POST['title'];
     $start = date('Y-m-d', strtotime($_POST['start']));
     $end = date('Y-m-d', strtotime($_POST['end']));
     $username = $_SESSION['username'] ?? 'DefaultUser';  // Utilisez une valeur par défaut ou assurez-vous que la session est toujours active
 
-    $query = "INSERT INTO conges (username, description, start_date, end_date) VALUES ('$username', '$title', '$start', '$end')";
-    if ($mysqli->query($query) === TRUE) {
-        echo json_encode(['success' => true, 'message' => 'Congé ajouté avec succès']);
+    $query = "INSERT INTO conges (username, description, start_date, end_date) VALUES (?, ?, ?, ?)";
+    $stmt = $mysqli->prepare($query);
+    if ($stmt) {
+        $stmt->bind_param("ssss", $username, $title, $start, $end);
+        if ($stmt->execute()) {
+            echo json_encode(['success' => true, 'message' => 'Congé ajouté avec succès']);
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Erreur lors de l\'ajout du congé: ' . $stmt->error]);
+        }
+        $stmt->close();
     } else {
-        echo json_encode(['success' => false, 'message' => 'Erreur lors de l\'ajout du congé: ' . $mysqli->error]);
+        echo json_encode(['success' => false, 'message' => 'Erreur de préparation de la requête']);
     }
     $mysqli->close();
     exit;
 }
-
 ?>
 
 <!DOCTYPE html>
@@ -62,28 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     }
                     calendar.fullCalendar('unselect');
                 },
-                events: function(start, end, timezone, callback) {
-                    $.ajax({
-                        url: 'load_events.php',  // Assurez-vous que ce fichier gère la requête GET
-                        dataType: 'json',
-                        data: {
-                            start: start.format(),
-                            end: end.format()
-                        },
-                        success: function(response) {
-                            var events = [];
-                            $(response).each(function() {
-                                events.push({
-                                    title: this.title,
-                                    start: this.start,
-                                    end: this.end,
-                                    color: this.color
-                                });
-                            });
-                            callback(events);
-                        }
-                    });
-                }
+                events: '/load_events.php'  // URL du fichier de chargement des événements
             });
         });
     </script>
