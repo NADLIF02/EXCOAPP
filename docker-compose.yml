@@ -18,13 +18,13 @@ services:
 
   web:
     build:
-      context: ./src
-      dockerfile: Dockerfile
+      context: ./public
+      dockerfile: Dockerfile  # Assurez-vous que le Dockerfile est situé dans le répertoire public
     ports:
       - "80:80"
     volumes:
       - ./public:/var/www/html
-      - ./src:/var/www/src
+      - ./src:/var/www/src  # Cela monte le répertoire src dans le conteneur pour accéder à db.php ou à d'autres fichiers PHP nécessaires
     depends_on:
       - db
 
