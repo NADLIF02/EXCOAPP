@@ -3,7 +3,7 @@ version: '3.8'
 services:
   db:
     build: ./db
-      container_name: Database
+    container_name: Database
     environment:
       MYSQL_ROOT_PASSWORD: admin123  # Utilisez un mot de passe fort en production
       MYSQL_DATABASE: employee_leaves
