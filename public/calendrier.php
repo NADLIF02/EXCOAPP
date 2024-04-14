@@ -1,8 +1,25 @@
 <?php
-$month = date('F');
+session_start();
+
+$mysqli = new mysqli("localhost", "username", "password", "database_name"); // Modifiez avec vos vrais données
+$month = date('n'); // Mois en chiffres sans les zéros initiaux
 $year = date('Y');
+
+// Début et fin du mois
+$startDate = "$year-$month-01";
+$endDate = date("Y-m-t", strtotime($startDate));
+
+// Récupérer les congés du mois
+$query = "SELECT * FROM conges WHERE start_date BETWEEN '$startDate' AND '$endDate' OR end_date BETWEEN '$startDate' AND '$endDate'";
+$result = $mysqli->query($query);
+$conges = [];
+while ($row = $result->fetch_assoc()) {
+    $conges[] = $row;
+}
+$mysqli->close();
+
 $daysInMonth = date('t');
-$startDayOfWeek = date('N', strtotime("$year-$month-01"));
+$startDayOfWeek = date('N', strtotime($startDate));
 ?>
 
 <!DOCTYPE html>
@@ -15,8 +32,7 @@ $startDayOfWeek = date('N', strtotime("$year-$month-01"));
 <body>
     <div class="calendar-container">
         <div class="calendar-header">
-            <h1><?php echo $month; ?> <button>▾</button></h1>
-            <p><?php echo $year; ?></p>
+            <h1><?php echo date('F Y'); ?></h1>
         </div>
         <div class="calendar">
             <?php
@@ -25,70 +41,34 @@ $startDayOfWeek = date('N', strtotime("$year-$month-01"));
                 echo "<span class='day-name'>$dayName</span>";
             }
 
-            $currentDay = 1;
-            $cells = $startDayOfWeek + $daysInMonth - 1;
-            for ($i = 1; $i <= $cells; $i++) {
-                if ($i >= $startDayOfWeek) {
-                    echo "<div class='day'>$currentDay</div>";
-                    $currentDay++;
-                } else {
-                    echo "<div class='day day--disabled'></div>";
+            for ($i = 1; $i < $startDayOfWeek; $i++) {
+                echo "<div class='day day--disabled'></div>";
+            }
+            
+            $currentDate = $startDate;
+            for ($i = 1; $i <= $daysInMonth; $i++) {
+                $isConge = false;
+                foreach ($conges as $conge) {
+                    if ($conge['start_date'] <= $currentDate && $conge['end_date'] >= $currentDate) {
+                        echo "<div class='day' style='background-color: #ffcccc;'>$i<div class='task'>{$conge['description']}</div></div>";
+                        $isConge = true;
+                        break;
+                    }
                 }
+                if (!$isConge) {
+                    echo "<div class='day'>$i</div>";
+                }
+                $currentDate = date('Y-m-d', strtotime("$currentDate +1 day"));
             }
             ?>
         </div>
-        <section class="task task--warning">
-            <div class="task__detail">
-                <h2>Product Checkup 1</h2>
-                <p>15-17th November</p>
-            </div>
-        </section>
-        <section class="task task--danger">Design Sprint</section>
-        <section class="task task--primary">Product Checkup 1</section>
-        <section class="task task--info">Product Checkup 2</section>
     </div>
+    <form id="congeForm">
+        <input type="date" name="start_date" required>
+        <input type="date" name="end_date" required>
+        <input type="text" name="description" placeholder="Description">
+        <button type="submit">Poser congé</button>
+    </form>
+    <script src="script.js"></script>
 </body>
-    <form id="congeForm" action="submit_conge.php" method="post">
-    <input type="date" name="start_date" required>
-    <input type="date" name="end_date" required>
-    <input type="text" name="description" placeholder="Description">
-    <button type="submit">Poser congé</button>
-</form>
-// Continuation après récupération des congés
-$calendar = "";
-$currentDate = "$year-$month-01";
-for ($i = 1; $i < $startDayOfWeek; $i++) {
-    $calendar .= "<div class='day day--disabled'></div>";
-}
-for ($i = 1; $i <= $daysInMonth; $i++, $currentDate = date('Y-m-d', strtotime("$currentDate +1 day"))) {
-    $dayContent = "<div class='day' data-date='$currentDate'>$i";
-    foreach ($conges as $conge) {
-        if ($conge['start_date'] <= $currentDate && $conge['end_date'] >= $currentDate) {
-            $dayContent .= "<div class='task' style='background-color: #ffcccc;'>{$conge['description']}</div>";
-        }
-    }
-    $dayContent .= "</div>";
-    $calendar .= $dayContent;
-}
-document.getElementById('congeForm').addEventListener('submit', function(event) {
-    event.preventDefault();
-    var formData = new FormData(this);
-    fetch('submit_conge.php', {
-        method: 'POST',
-        body: formData
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            alert('Congé ajouté avec succès');
-            location.reload(); // Simplement pour actualiser, à remplacer par une logique plus fine si nécessaire.
-        } else {
-            alert('Erreur lors de l\'ajout du congé');
-        }
-    })
-    .catch(error => {
-        alert('Erreur: ' + error);
-    });
-});
-
 </html>
