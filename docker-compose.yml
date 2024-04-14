@@ -11,7 +11,8 @@ services:
       - ./public:/var/www/html
       - ./src:/var/www/src  # Montage du répertoire src dans le conteneur pour accéder à db.php et d'autres fichiers PHP nécessaires
     depends_on:
-      - db
+      db: 
+       condition: service_healthy
 
   db:
     build: 
