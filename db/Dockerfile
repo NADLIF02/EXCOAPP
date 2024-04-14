@@ -8,8 +8,7 @@ ENV MYSQL_USER=admin
 ENV MYSQL_PASSWORD=admin123
 
 # Copiez votre fichier SQL dans le dossier d'initialisation de Docker
-COPY ./db/init.sql /docker-entrypoint-initdb.d/
-
+COPY init.sql /docker-entrypoint-initdb.d/
 # Exposez le port par défaut de MariaDB
 EXPOSE 3306
 
