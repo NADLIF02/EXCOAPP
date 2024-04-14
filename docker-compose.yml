@@ -1,21 +1,6 @@
 version: '3.8'
 
 services:
-  db:
-    build: ./db
-    container_name: database
-    environment:
-      MYSQL_ROOT_PASSWORD: admin123  # Utilisez un mot de passe fort en production
-      MYSQL_DATABASE: employee_leaves
-      MYSQL_USER: admin
-      MYSQL_PASSWORD: admin123
-    ports:
-      - "3306:3306"
-    volumes:
-      - db_data:/var/lib/mysql
-      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql 
-    restart: always  # Notez la correction de l'indentation ici
-
   web:
     build: ./public  # Correction pour pointer vers le bon Dockerfile qui est dans le dossier src et non public
     container_name: excoapp
@@ -26,6 +11,17 @@ services:
       - ./src:/var/www/src  # Cela monte le répertoire src dans le conteneur pour accéder à db.php ou à d'autres fichiers PHP nécessaires
     depends_on:
       - db
-
+ db:
+    build:
+      context: ./db  # Assurez-vous que cela pointe vers le dossier contenant le Dockerfile et init.sql
+    environment:
+      MYSQL_ROOT_PASSWORD: admin123
+      MYSQL_DATABASE: employee_leaves
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: admin123
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
 volumes:
   db_data:
