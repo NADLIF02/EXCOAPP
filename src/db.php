@@ -1,7 +1,5 @@
 <?php
 session_start();
-require_once '/var/www/src/db.php';  // Ce chemin semble incorrect s'il est dans db.php lui-même
-
 // db.php - Gérer la connexion à la base de données
 $host = 'db';  // Utiliser 'db' qui est le nom du service Docker pour MySQL
 $username = 'admin';  // Nom d'utilisateur pour MySQL
