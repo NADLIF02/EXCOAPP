@@ -4,26 +4,7 @@ require_once '/var/www/src/db.php';
 $month = date('n');  // Mois en chiffres sans les zéros initiaux
 $year = date('Y');
 
-// Début et fin du mois
-$startDate = "$year-$month-01";
-$endDate = date("Y-m-t", strtotime($startDate));
-
-// Récupérer les congés du mois
-$query = "SELECT * FROM conges WHERE (start_date BETWEEN '$startDate' AND '$endDate') OR (end_date BETWEEN '$startDate' AND '$endDate')";
-$result = $mysqli->query($query);
-
-if (!$result) {
-    die('Erreur de requête : ' . $mysqli->error);
-}
-
-$conges = [];
-while ($row = $result->fetch_assoc()) {
-    $conges[] = $row;
-}
-$mysqli->close();
-
-$daysInMonth = date('t');
-$startDayOfWeek = date('N', strtotime($startDate));
+// Le code PHP pour récupérer les congés est retiré car nous le chargerons via AJAX
 ?>
 
 <!DOCTYPE html>
@@ -33,67 +14,53 @@ $startDayOfWeek = date('N', strtotime($startDate));
     <title>Calendrier Annuel des Congés</title>
     <link rel="stylesheet" href="styles.css">
     <link href='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.css' rel='stylesheet' />
-<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js'></script>
-<script src='https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js'></script>
-<script src='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.js'></script>
-
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js'></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js'></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.js'></script>
 </head>
 <body>
-    <div class="calendar-container">
-        <div class="calendar-header">
-            <h1><?php echo date('F Y'); ?></h1>
-        </div>
-        <div id='calendar'></div>
-<script>
-$(document).ready(function() {
-    $('#calendar').fullCalendar({
-        header: {
-            left: 'prev,next today',
-            center: 'title',
-            right: 'month,agendaWeek,agendaDay'
-        },
-        editable: true,
-        events: '/path_to_your_events_endpoint',
-        // Ajoutez ici des options pour gérer les changements de mois et les jours fériés
-    });
-});
-</script>
-
-        <div class="calendar">
-            <?php
-            $dayNames = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-            foreach ($dayNames as $dayName) {
-                echo "<span class='day-name'>$dayName</span>";
-            }
-
-            $currentDate = $startDate;
-            for ($i = 1; $i < $startDayOfWeek; $i++) {
-                echo "<div class='day day--disabled'></div>";
-            }
-
-            for ($i = 1; $i <= $daysInMonth; $i++) {
-                $isConge = false;
-                foreach ($conges as $conge) {
-                    if ($conge['start_date'] <= $currentDate && $conge['end_date'] >= $currentDate) {
-                        echo "<div class='day' style='background-color: #ffcccc;'>$i<div class='task'>{$conge['description']}</div></div>";
-                        $isConge = true;
-                        break;
+    <div id='calendar'></div>
+    <script>
+    $(document).ready(function() {
+        $('#calendar').fullCalendar({
+            header: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'month,agendaWeek,agendaDay'
+            },
+            editable: true,
+            eventLimit: true, // for all non-agenda views
+            views: {
+                agenda: {
+                    eventLimit: 6 // adjust to 6 only for agendaWeek/agendaDay
+                }
+            },
+            events: function(start, end, timezone, callback) {
+                $.ajax({
+                    url: '/path_to_load_events.php', // Chemin vers le script PHP qui retourne les données JSON
+                    dataType: 'json',
+                    data: {
+                        // nos données à envoyer
+                        start: start.unix(),
+                        end: end.unix()
+                    },
+                    success: function(doc) {
+                        var events = [];
+                        $(doc).each(function() {
+                            events.push({
+                                title: $(this).attr('title'),
+                                start: $(this).attr('start'), // Assurez-vous que la date de début est correcte
+                                end: $(this).attr('end'), // Assurez-vous que la date de fin est correcte
+                                backgroundColor: $(this).attr('color'), // Couleur par utilisateur
+                                borderColor: $(this).attr('color')
+                            });
+                        });
+                        callback(events);
                     }
-                }
-                if (!$isConge) {
-                    echo "<div class='day'>$i</div>";
-                }
-                $currentDate = date('Y-m-d', strtotime("$currentDate +1 day"));
+                });
             }
-            ?>
-        </div>
-    </div>
-    <form id="congeForm">
-        <input type="date" name="start_date" required>
-        <input type="date" name="end_date" required>
-        <input type="text" name="description" placeholder="Description">
-        <button type="submit">Poser congé</button>
-    </form>
-    <script src="script.js"></script>
+        });
+    });
+    </script>
 </body>
 </html>
