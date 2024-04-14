@@ -1,13 +1,15 @@
 <?php
-$host = 'db';  // L'adresse du serveur de base de données
-$username = 'admin';  // Le nom d'utilisateur pour se connecter
-$password = 'admin123';  // Le mot de passe pour se connecter
-$database = 'employee_leaves';  // Le nom de la base de données
+$host = 'db';
+$username = 'admin';
+$password = 'admin123';
+$database = 'employee_leaves';
 
-try {
-    $db = new PDO("mysql:host=$host;dbname=$database", $username, $password);
-    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (PDOException $e) {
-    die("Erreur de connexion à la base de données : " . $e->getMessage());
+$mysqli = new mysqli($host, $username, $password, $database);
+
+if ($mysqli->connect_error) {
+    die("Connection failed: " . $mysqli->connect_error);
 }
+
+// Définir le charset pour éviter les problèmes d'encodage
+$mysqli->set_charset("utf8");
 ?>
