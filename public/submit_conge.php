@@ -1,21 +1,14 @@
 <?php
-session_start();
-session_start();
 require_once '/var/www/src/db.php';
-$mysqli = new mysqli("localhost", "username", "password", "database_name"); // Modifiez avec vos vrais données
 
-$start_date = $_POST['start_date'];
-$end_date = $_POST['end_date'];
-$description = $_POST['description'];
+$title = $_POST['title'];
+$start = date('Y-m-d', strtotime($_POST['start']));
+$end = date('Y-m-d', strtotime($_POST['end']));
 
-$query = "INSERT INTO conges (start_date, end_date, description) VALUES (?, ?, ?)";
-$stmt = $mysqli->prepare($query);
-$stmt->bind_param("sss", $start_date, $end_date, $description);
-if ($stmt->execute()) {
-    echo json_encode(['success' => true]);
+$query = "INSERT INTO conges (username, description, start_date, end_date) VALUES ('User', '$title', '$start', '$end')";
+if ($mysqli->query($query) === TRUE) {
+    echo "New record created successfully";
 } else {
-    echo json_encode(['success' => false]);
+    echo "Error: " . $query . "<br>" . $mysqli->error;
 }
-
 $mysqli->close();
-?>
