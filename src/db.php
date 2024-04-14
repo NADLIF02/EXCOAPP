@@ -1,17 +1,15 @@
 <?php
-session_start();
+// db.php - Gérer la connexion à la base de données avec PDO
 
-// Récupérer les paramètres de connexion de variables d'environnement
-$host = getenv('DB_HOST') ?: 'db';  // Utiliser 'db' comme valeur par défaut si non défini
-$username = getenv('DB_USER') ?: 'admin';  // Nom d'utilisateur par défaut
-$password = getenv('DB_PASS') ?: 'admin123';  // Mot de passe par défaut
-$database = getenv('DB_NAME') ?: 'employee_leaves';  // Nom de la base de données par défaut
+$host = 'db';  // Utiliser 'db' qui est le nom du service Docker pour MySQL
+$username = 'admin';  // Nom d'utilisateur pour MySQL
+$password = 'admin123';  // Mot de passe pour MySQL
+$database = 'employee_leaves';  // Nom de la base de données
 
-// Créer une connexion à la base de données
-$mysqli = new mysqli($host, $username, $password, $database);
-
-// Vérifier les erreurs de connexion
-if ($mysqli->connect_error) {
-    die('Erreur de connexion : (' . $mysqli->connect_errno . ') ' . $mysqli->connect_error);
+try {
+    $db = new PDO("mysql:host=$host;dbname=$database;charset=utf8", $username, $password);
+    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+} catch (PDOException $e) {
+    die('Erreur de connexion : ' . $e->getMessage());
 }
 ?>
