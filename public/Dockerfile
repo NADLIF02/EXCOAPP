@@ -12,8 +12,8 @@ RUN a2enmod headers
 
 # Copier les fichiers du projet dans le conteneur
 # Assurez-vous que les dossiers 'src' et 'public' contiennent les fichiers nécessaires à votre application
-COPY src/ /var/www/src/
-COPY public/ /var/www/html/
+#COPY src/ /var/www/src/
+#COPY public/ /var/www/html/
 
 # Changer la propriété des fichiers au www-data utilisateur et groupe pour éviter les problèmes de permission
 RUN chown -R www-data:www-data /var/www
