@@ -1,14 +1,9 @@
 <?php
 session_start();
-if (!isset($_SESSION['loggedin']) && $_SESSION['loggedin'] !== true) {
+if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
     header('Location: index.php');
     exit;
 }
-$_SESSION['loggedin'] = true;
-$_SESSION['username'] = $username; // Stocker le nom d'utilisateur
-header("Location: calendrier.php");
-exit;
-
 ?>
 
 <!DOCTYPE html>
