@@ -1,10 +1,6 @@
 <?php
 session_start();
-require_once '/var/www/src/db.php';  
-$month = date('n');  // Mois en chiffres sans les zéros initiaux
-$year = date('Y');
-
-// Le code PHP pour récupérer les congés est retiré car nous le chargerons via AJAX
+require_once '/var/www/src/db.php';  // Assurez-vous que ce chemin est correct
 ?>
 
 <!DOCTYPE html>
@@ -21,48 +17,43 @@ $year = date('Y');
 <body>
     <div id='calendar'></div>
     <script>
-  $(document).ready(function() {
-    var calendar = $('#calendar').fullCalendar({
-        header: {
-            left: 'prev,next today',
-            center: 'title',
-            right: 'month,agendaWeek,agendaDay'
-        },
-        editable: true,
-        selectable: true,
-        selectHelper: true,
-        select: function(start, end) {
-            var title = prompt("Entrez le motif de votre congé:");
-            var eventData;
-            if (title) {
-                eventData = {
-                    title: title,
-                    start: start,
-                    end: end
-                };
-                $('#calendar').fullCalendar('renderEvent', eventData, true); // stick? = true
-                // Ajouter ici le code pour envoyer les données au serveur
-                $.post('/submit_conge.php', {
-                    title: title,
-                    start: start.format(),
-                    end: end.format()
-                }, function(response){
-                    alert("Congé ajouté avec succès");
-                });
-            }
-            $('#calendar').fullCalendar('unselect');
-        },
-        eventLimit: true, // allow "more" link when too many events
-        events: '/path_to_load_events.php',
-    });
-});
-
-                        callback(events);
+        $(document).ready(function() {
+            var calendar = $('#calendar').fullCalendar({
+                header: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'month,agendaWeek,agendaDay'
+                },
+                editable: true,
+                selectable: true,
+                selectHelper: true,
+                select: function(start, end) {
+                    var title = prompt("Entrez le motif de votre congé:");
+                    if (title) {
+                        var eventData = {
+                            title: title,
+                            start: start,
+                            end: end
+                        };
+                        // Ajouter l'événement au calendrier
+                        $('#calendar').fullCalendar('renderEvent', eventData, true); // stick = true
+                        // Envoyer les données au serveur pour enregistrement
+                        $.post('/submit_conge.php', {
+                            title: title,
+                            start: start.format(),
+                            end: end.format()
+                        }).done(function(response) {
+                            alert("Congé ajouté avec succès");
+                            $('#calendar').fullCalendar('refetchEvents'); // Recharge les événements pour inclure le nouveau
+                        }).fail(function() {
+                            alert("Erreur lors de l'ajout du congé");
+                        });
                     }
-                });
-            }
+                    $('#calendar').fullCalendar('unselect');
+                },
+                events: '/load_events.php'  // Assurez-vous que le chemin est correct
+            });
         });
-    });
     </script>
 </body>
 </html>
