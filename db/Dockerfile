@@ -11,7 +11,7 @@ ENV MYSQL_PASSWORD=admin123
 COPY ./init.sql /docker-entrypoint-initdb.d/
 
 # Set the custom entrypoint, if you have one
-#COPY custom-entrypoint.sh /usr/local/bin/custom-entrypoint.sh
+COPY custom-entrypoint.sh /usr/local/bin/custom-entrypoint.sh
 RUN chmod +x /usr/local/bin/custom-entrypoint.sh
 
 # Expose the default port
