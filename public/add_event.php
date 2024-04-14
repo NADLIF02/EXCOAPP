@@ -1,6 +1,7 @@
 <?php
 session_start();
 $db = new PDO('mysql:host=localhost;dbname=nom_de_votre_base', 'utilisateur', 'mot_de_passe');
+require_once '/var/www/src/db.php'; 
 
 $username = $_SESSION['username']; // Assurez-vous que l'utilisateur est connecté et stockez son nom dans la session
 $title = $_POST['title'];
