@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once '/var/www/src/db.php'; 
+require_once '/var/www/src/db.php'; // Assurez-vous que ce fichier retourne l'objet $db de type PDO
 
 // Redirection si déjà connecté
 if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true) {
