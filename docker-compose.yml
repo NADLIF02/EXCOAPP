@@ -3,7 +3,7 @@ version: '3.9'
 services:
   web:
     build: 
-      context: ./public  # Correction pour pointer vers le bon Dockerfile dans le dossier src
+      context: ./src  # Correction pour pointer vers le bon Dockerfile dans le dossier src
     container_name: excoapp
     ports:
       - "80:80"
@@ -12,7 +12,7 @@ services:
       - ./src:/var/www/src  # Montage du répertoire src dans le conteneur pour accéder à db.php et d'autres fichiers PHP nécessaires
     depends_on:
       db: 
-       condition: service_healthy
+        condition: service_healthy
 
   db:
     build: 
@@ -27,6 +27,12 @@ services:
       - "3306:3306"
     volumes:
       - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
 volumes:
   db_data:
