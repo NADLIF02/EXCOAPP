@@ -1,9 +1,24 @@
-version: '3.9'  # Recommended to use a recent version
+version: '3.9'
 
 services:
+  web:
+    build: 
+      context: ./public
+      dockerfile: Dockerfile  # Point to the correct Dockerfile in the public directory
+    container_name: excoapp
+    ports:
+      - "80:80"
+    volumes:
+      - ./public:/var/www/html
+      - ./src:/var/www/src
+    depends_on:
+      db:
+        condition: service_healthy
+
   db:
-    build:
-      context: ./db  # Make sure this path contains the Dockerfile and SQL scripts
+    build: 
+      context: ./db
+      dockerfile: Dockerfile  # Point to the correct Dockerfile in the db directory
     container_name: database
     environment:
       MYSQL_ROOT_PASSWORD: admin123
@@ -14,6 +29,7 @@ services:
       - "3306:3306"
     volumes:
       - db_data:/var/lib/mysql
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       interval: 10s
@@ -22,16 +38,4 @@ services:
       start_period: 30s
 
 volumes:
-  db_data:  # Persistent data storage for MariaDB
-
-web:
-  build: ./public
-  container_name: excoapp_web
-  depends_on:
-    db:
-      condition: service_healthy
-  ports:
-    - "80:80"
-  volumes:
-    - ./public:/var/www/html
-    - ./src:/var/www/src
+  db_data:
