@@ -1,7 +1,7 @@
 <?php
 session_start();
+include '../src/db.php'; // Assurez-vous que le chemin est correct si db.php est déplacé
 
-$mysqli = new mysqli("localhost", "username", "password", "database_name"); // Modifiez avec vos vrais données
 $month = date('n'); // Mois en chiffres sans les zéros initiaux
 $year = date('Y');
 
@@ -10,7 +10,7 @@ $startDate = "$year-$month-01";
 $endDate = date("Y-m-t", strtotime($startDate));
 
 // Récupérer les congés du mois
-$query = "SELECT * FROM conges WHERE start_date BETWEEN '$startDate' AND '$endDate' OR end_date BETWEEN '$startDate' AND '$endDate'";
+$query = "SELECT * FROM conges WHERE (start_date BETWEEN '$startDate' AND '$endDate') OR (end_date BETWEEN '$startDate' AND '$endDate')";
 $result = $mysqli->query($query);
 $conges = [];
 while ($row = $result->fetch_assoc()) {
