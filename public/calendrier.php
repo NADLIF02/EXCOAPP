@@ -1,12 +1,3 @@
-<?php
-session_start();
-require_once '/var/www/src/db.php';  // Assurez-vous que le chemin est correct
-
-// Ajout d'une en-tête pour éviter les problèmes de cache sur les requêtes AJAX
-header("Cache-Control: no-cache, must-revalidate");
-
-?>
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -26,30 +17,13 @@ header("Cache-Control: no-cache, must-revalidate");
                 header: {
                     left: 'prev,next today',
                     center: 'title',
-                    right: 'month,agendaWeek,agendaDay,listWeek'
+                    right: 'month,agendaWeek,agendaDay,listMonth'
                 },
                 editable: true,
-                selectable: true,
-                selectHelper: true,
-                select: function(start, end) {
-                    var title = prompt("Entrez le motif de votre congé:");
-                    if (title) {
-                        $.post('submit_conge.php', {
-                            title: title,
-                            start: start.format(),
-                            end: end.format()
-                        }, function(response) {
-                            response = JSON.parse(response);
-                            alert(response.message);
-                            if (response.success) {
-                                calendar.fullCalendar('refetchEvents');
-                            }
-                        });
-                    }
-                    calendar.fullCalendar('unselect');
-                },
-                eventLimit: true,
-                events: 'load_events.php'
+                events: 'load_events.php', // Modifier ceci pour correspondre à votre configuration
+                eventRender: function(event, element) {
+                    element.find('.fc-title').append('<br/>' + event.title); // Ajouter le nom de l'utilisateur au titre de l'événement
+                }
             });
         });
     </script>
