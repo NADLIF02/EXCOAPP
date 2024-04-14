@@ -3,7 +3,7 @@ version: '3.9'
 services:
   web:
     build: 
-      context: ./src  # Correction pour pointer vers le bon Dockerfile dans le dossier src
+      context: ./public  # Correction pour pointer vers le bon Dockerfile dans le dossier src
     container_name: excoapp
     ports:
       - "80:80"
