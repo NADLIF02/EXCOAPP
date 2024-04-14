@@ -73,3 +73,17 @@ input[type="submit"]:hover {
     color: red;
     font-weight: bold;
 }
+@media (max-width: 768px) {
+    .container {
+        width: 100%;
+        padding: 10px;
+    }
+
+    header h1, header p {
+        font-size: 1.2em;  // Adjust font size for mobile devices
+    }
+
+    nav ul li a {
+        font-size: 1em;  // Adjust link font size for smaller screens
+    }
+}
