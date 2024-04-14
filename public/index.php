@@ -1,8 +1,7 @@
 <?php
 session_start();
-require_once '/var/www/src/db.php'; 
+require_once '/var/www/src/db.php';
 
-// Redirection si déjà connecté
 if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true) {
     header("Location: calendrier.php");
     exit;
@@ -17,13 +16,12 @@ if (isset($_POST['login'])) {
     if (empty($username) || empty($password)) {
         $error_message = "Veuillez remplir tous les champs.";
     } else {
-        // Préparer la requête à la base de données pour vérifier les identifiants
-        $stmt = $db->prepare("SELECT id, username, password FROM users WHERE username = :username");
-        $stmt->bindValue(':username', $username);
+        $stmt = $mysqli->prepare("SELECT id, username, password FROM users WHERE username = ?");
+        $stmt->bind_param('s', $username);
         $stmt->execute();
+        $result = $stmt->get_result();
 
-        if ($user = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            // Vérifier le mot de passe (supposons que les mots de passe sont hachés)
+        if ($user = $result->fetch_assoc()) {
             if (password_verify($password, $user['password'])) {
                 $_SESSION['loggedin'] = true;
                 $_SESSION['username'] = $user['username'];
@@ -38,7 +36,6 @@ if (isset($_POST['login'])) {
     }
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -54,9 +51,9 @@ if (isset($_POST['login'])) {
         <?php endif; ?>
         <form action="index.php" method="post">
             <label for="username">Nom d'utilisateur:</label>
-            <input type="text" id="username" name="username" required><br>
+            <input type of="text" id="username" name="username" required>
             <label for="password">Mot de passe:</label>
-            <input type="password" id="password" name="password" required><br>
+            <input type of="password" id="password" name="password" required>
             <input type="submit" name="login" value="Se connecter">
         </form>
     </div>
