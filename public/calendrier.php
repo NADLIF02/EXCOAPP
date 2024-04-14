@@ -48,4 +48,11 @@ $startDayOfWeek = date('N', strtotime("$year-$month-01"));
         <section class="task task--info">Product Checkup 2</section>
     </div>
 </body>
+    <form id="congeForm" action="submit_conge.php" method="post">
+    <input type="date" name="start_date" required>
+    <input type="date" name="end_date" required>
+    <input type="text" name="description" placeholder="Description">
+    <button type="submit">Poser congé</button>
+</form>
+
 </html>
