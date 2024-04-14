@@ -32,12 +32,33 @@ $startDayOfWeek = date('N', strtotime($startDate));
     <meta charset="UTF-8">
     <title>Calendrier Annuel des Congés</title>
     <link rel="stylesheet" href="styles.css">
+    <link href='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.css' rel='stylesheet' />
+<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.js'></script>
+
 </head>
 <body>
     <div class="calendar-container">
         <div class="calendar-header">
             <h1><?php echo date('F Y'); ?></h1>
         </div>
+        <div id='calendar'></div>
+<script>
+$(document).ready(function() {
+    $('#calendar').fullCalendar({
+        header: {
+            left: 'prev,next today',
+            center: 'title',
+            right: 'month,agendaWeek,agendaDay'
+        },
+        editable: true,
+        events: '/path_to_your_events_endpoint',
+        // Ajoutez ici des options pour gérer les changements de mois et les jours fériés
+    });
+});
+</script>
+
         <div class="calendar">
             <?php
             $dayNames = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
