@@ -4,7 +4,7 @@ $username = 'admin';
 $password = 'admin123';
 $database = 'employee_leaves';
 
-$mysqli = new mysqli($host, $username, $password, $database);
+$mysqli = new mysqli($db, $admin, $admin123, $employee_leaves);
 
 if ($mysqli->connect_error) {
     die("Connection failed: " . $mysqli->connect_error);
