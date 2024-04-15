@@ -1,3 +1,10 @@
+
+-- Création d'un utilisateur de base de données spécifique pour l'application si non existant
+CREATE USER IF NOT EXISTS 'admin'@'%' IDENTIFIED BY 'admin123';
+
+-- Attribution des privilèges à l'utilisateur
+GRANT ALL PRIVILEGES ON employee_leaves.* TO 'admin'@'%';
+
 -- Création de la base de données si elle n'existe pas
 CREATE DATABASE IF NOT EXISTS employee_leaves;
 USE employee_leaves;
@@ -18,11 +25,6 @@ CREATE TABLE IF NOT EXISTS users (
     password VARCHAR(255) NOT NULL
 );
 
--- Création d'un utilisateur de base de données spécifique pour l'application si non existant
-CREATE USER IF NOT EXISTS 'admin'@'%' IDENTIFIED BY 'admin123';
-
--- Attribution des privilèges à l'utilisateur
-GRANT ALL PRIVILEGES ON employee_leaves.* TO 'admin'@'%';
 
 -- Application des changements de privilèges
 FLUSH PRIVILEGES;
