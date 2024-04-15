@@ -2,10 +2,12 @@
 FROM php:8.0-apache
 
 # Installer les extensions PDO et MySQLi pour la connexion à la base de données
-RUN apt-get update -y && \
-    apt-get install -y libpng-dev
-RUN docker-php-ext-install pdo pdo_mysql mysqli gd
+RUN apt-get update
+RUN apt-get install --yes --force-yes cron g++ gettext libicu-dev openssl libc-client-dev libkrb5-dev libxml2-dev libfreetype6-dev libgd-dev libmcrypt-dev bzip2 libbz2-dev libtidy-dev libcurl4-openssl-dev libz-dev libmemcached-dev libxslt-dev
 
+RUN docker-php-ext-install pdo pdo_mysql  gd
+RUN docker-php-ext-install mysqli
+RUN docker-php-ext-enable mysqli
 # Activer la réécriture d'URL pour Apache, permettant l'utilisation de .htaccess pour des URL amicales
 RUN a2enmod rewrite
 
