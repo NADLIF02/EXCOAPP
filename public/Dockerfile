@@ -1,8 +1,10 @@
 # Utiliser une image de base PHP avec Apache
-FROM php:7.4-apache
+FROM php:8.0-apache
 
 # Installer les extensions PDO et MySQLi pour la connexion à la base de données
-RUN docker-php-ext-install pdo pdo_mysql mysqli
+RUN apt-get update -y && \
+    apt-get install -y libpng-dev
+RUN docker-php-ext-install pdo pdo_mysql mysqli gd
 
 # Activer la réécriture d'URL pour Apache, permettant l'utilisation de .htaccess pour des URL amicales
 RUN a2enmod rewrite
